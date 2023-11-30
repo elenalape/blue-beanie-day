@@ -21,9 +21,7 @@ function WebcamCapture({ onCapture }) {
 
   const startWebcam = async () => {
     try {
-      const constraints = {
-        video: { facingMode: "user" }, // Prefers the front-facing camera
-      };
+      const constraints = { video: { facingMode: "user" } }; // Use front-facing camera
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       videoRef.current.srcObject = stream;
       setStreaming(true);
@@ -51,24 +49,11 @@ function WebcamCapture({ onCapture }) {
         autoPlay
         playsInline
         muted
-        style={{ display: streaming ? "block" : "none", width: "100%" }}
+        style={{ display: streaming ? "block" : "none" }}
       />
       <canvas ref={canvasRef} style={{ display: "none" }} />
-      {!streaming && (
-        <button onClick={startWebcam} className="mt-1 underline">
-          Use Webcam Instead
-        </button>
-      )}
-      {streaming && (
-        <button
-          onClick={captureImage}
-          className={
-            "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2"
-          }
-        >
-          Capture Image
-        </button>
-      )}
+      {!streaming && <button onClick={startWebcam}>Use Webcam Instead</button>}
+      {streaming && <button onClick={captureImage}>Capture Image</button>}
     </div>
   );
 }

@@ -11,9 +11,6 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
-    // await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
-
     Promise.all([
       faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
       faceapi.nets.ssdMobilenetv1.loadFromUri("/models"),
@@ -21,15 +18,6 @@ function App() {
       setModelLoaded(true);
     });
   }, []);
-
-  // useEffect(() => {
-  //   Promise.all([
-  //     faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
-  //     faceapi.nets.ssdMobilenetv1.loadFromUri("/models"),
-  //   ]).then(() => {
-  //     setModelLoaded(true);
-  //   });
-  // }, []);
 
   const handleImageUpload = event => {
     setHasLoaded(false);
@@ -98,6 +86,20 @@ function App() {
 
     setEditedImage(canvas.toDataURL());
     setHasLoaded(true);
+
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      setEditedImage(url);
+    }, "image/png");
+  };
+
+  const downloadImage = () => {
+    const link = document.createElement("a");
+    link.href = editedImage;
+    link.download = "edited-image.png";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const loadImage = src => {
@@ -173,15 +175,16 @@ function App() {
               alt="Edited image with a blue beanie"
               className="uploaded-image"
             />
-            <a href={editedImage} download="edited-image.png">
-              <button
-                className={
-                  "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2"
-                }
-              >
-                Download
-              </button>
-            </a>
+            {/* <a href={editedImage} download="edited-image.png"> */}
+            <button
+              onClick={downloadImage}
+              className={
+                "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2"
+              }
+            >
+              Download
+            </button>
+            {/* </a> */}
           </div>
         )}
       </div>
