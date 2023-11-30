@@ -4,6 +4,7 @@ import * as faceapi from "face-api.js";
 
 function App() {
   const [image, setImage] = useState();
+  const [modelLoaded, setModelLoaded] = useState(false); // [1
   const [editedImage, setEditedImage] = useState();
   const [hasLoaded, setHasLoaded] = useState(false);
   const [error, setError] = useState(null);
@@ -11,8 +12,9 @@ function App() {
   useEffect(() => {
     const loadModels = async () => {
       await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
-      await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
+      // await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
       console.log("tinyFaceDetector model loaded");
+      setModelLoaded(true);
     };
 
     loadModels();
@@ -39,7 +41,8 @@ function App() {
 
     await imageElement.decode();
 
-    const options = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.1 });
+    // const options = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.1 });
+    const options = new faceapi.TinyFaceDetectorOptions({ minConfidence: 0.1 });
     const detections = await faceapi.detectAllFaces(imageElement, options);
 
     if (detections.length === 0) {
@@ -111,7 +114,9 @@ function App() {
       </p>
       <div className="flex justify-center">
         <div className="border-2 border-dashed border-gray-400 rounded-lg p-3 w-fit">
-          <input type="file" accept="image/*" onChange={handleImageUpload} />
+          {modelLoaded && (
+            <input type="file" accept="image/*" onChange={handleImageUpload} />
+          )}
         </div>
       </div>
       {error && <div className="text-red-500 text-sm py-2">{error}</div>}
