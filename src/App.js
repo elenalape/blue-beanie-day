@@ -10,6 +10,7 @@ function App() {
   useEffect(() => {
     const loadModels = async () => {
       await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
+      await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
       console.log("tinyFaceDetector model loaded");
     };
 
