@@ -1,6 +1,7 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
 import * as faceapi from "face-api.js";
+import WebcamCapture from "./WebcamCapture";
 
 function App() {
   const [image, setImage] = useState();
@@ -43,6 +44,12 @@ function App() {
     if (file) {
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleCapture = imageDataUrl => {
+    setHasLoaded(false);
+    setEditedImage(null);
+    setImage(imageDataUrl);
   };
 
   const addBeanie = async () => {
@@ -122,14 +129,23 @@ function App() {
         Upload a photo to add a blue beanie to the faces in the picture. Images
         are not stored.
       </p>
-      <div className="flex justify-center">
-        <div className="border-2 border-dashed border-gray-400 rounded-lg p-3 w-fit">
-          {modelLoaded ? (
-            <input type="file" accept="image/*" onChange={handleImageUpload} />
-          ) : (
-            <div>Loading...</div>
-          )}
-        </div>
+      <div className="flex justify-center flex-col">
+        {modelLoaded ? (
+          <>
+            <div className="flex mx-auto">
+              <div className="border-2 border-dashed border-gray-400 rounded-lg p-3 w-fit">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+              </div>
+            </div>
+            <WebcamCapture onCapture={handleCapture} />
+          </>
+        ) : (
+          <div>Loading...</div>
+        )}
       </div>
       {error && <div className="text-red-500 text-sm py-2">{error}</div>}
       <div className="flex justify-center mt-4 flex-wrap gap-4">
