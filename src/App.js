@@ -10,15 +10,25 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const loadModels = async () => {
-      await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
-      // await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
-      console.log("tinyFaceDetector model loaded");
-      setModelLoaded(true);
-    };
+    // await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
+    // await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
 
-    loadModels();
+    Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
+      faceapi.nets.ssdMobilenetv1.loadFromUri("/models"),
+    ]).then(() => {
+      setModelLoaded(true);
+    });
   }, []);
+
+  // useEffect(() => {
+  //   Promise.all([
+  //     faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
+  //     faceapi.nets.ssdMobilenetv1.loadFromUri("/models"),
+  //   ]).then(() => {
+  //     setModelLoaded(true);
+  //   });
+  // }, []);
 
   const handleImageUpload = event => {
     setHasLoaded(false);
@@ -41,8 +51,8 @@ function App() {
 
     await imageElement.decode();
 
-    // const options = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.1 });
-    const options = new faceapi.TinyFaceDetectorOptions({ minConfidence: 0.1 });
+    const options = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.1 });
+    // const options = new faceapi.TinyFaceDetectorOptions({ minConfidence: 0.1 });
     const detections = await faceapi.detectAllFaces(imageElement, options);
 
     if (detections.length === 0) {
@@ -114,8 +124,10 @@ function App() {
       </p>
       <div className="flex justify-center">
         <div className="border-2 border-dashed border-gray-400 rounded-lg p-3 w-fit">
-          {modelLoaded && (
+          {modelLoaded ? (
             <input type="file" accept="image/*" onChange={handleImageUpload} />
+          ) : (
+            <div>Loading...</div>
           )}
         </div>
       </div>
