@@ -6,6 +6,7 @@ function App() {
   const [image, setImage] = useState();
   const [editedImage, setEditedImage] = useState();
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const loadModels = async () => {
@@ -40,6 +41,14 @@ function App() {
 
     const options = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.1 });
     const detections = await faceapi.detectAllFaces(imageElement, options);
+
+    if (detections.length === 0) {
+      setError("No faces detected");
+      setHasLoaded(false);
+      setEditedImage(null);
+      setImage(null);
+      return;
+    }
 
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
@@ -105,6 +114,7 @@ function App() {
           <input type="file" accept="image/*" onChange={handleImageUpload} />
         </div>
       </div>
+      {error && <div className="text-red-500 text-sm py-2">{error}</div>}
       <div className="flex justify-center mt-4 flex-wrap gap-4">
         <div>
           {image && (
