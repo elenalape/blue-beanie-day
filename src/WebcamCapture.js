@@ -22,11 +22,10 @@ function WebcamCapture({ onCapture }) {
   const startWebcam = async () => {
     try {
       const constraints = {
-        video: { facingMode: "user" }, // Use the front-facing camera on mobile
+        video: { facingMode: "user" }, // Prefers the front-facing camera
       };
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       videoRef.current.srcObject = stream;
-      videoRef.current.play();
       setStreaming(true);
     } catch (error) {
       console.error("Error accessing the webcam:", error);
@@ -47,10 +46,29 @@ function WebcamCapture({ onCapture }) {
 
   return (
     <div>
-      <video ref={videoRef} style={{ display: streaming ? "block" : "none" }} />
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        muted
+        style={{ display: streaming ? "block" : "none", width: "100%" }}
+      />
       <canvas ref={canvasRef} style={{ display: "none" }} />
-      {!streaming && <button onClick={startWebcam}>Start Webcam</button>}
-      {streaming && <button onClick={captureImage}>Capture Image</button>}
+      {!streaming && (
+        <button onClick={startWebcam} className="mt-1 underline">
+          Use Webcam Instead
+        </button>
+      )}
+      {streaming && (
+        <button
+          onClick={captureImage}
+          className={
+            "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2"
+          }
+        >
+          Capture Image
+        </button>
+      )}
     </div>
   );
 }
